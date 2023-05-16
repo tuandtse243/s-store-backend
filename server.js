@@ -1,10 +1,12 @@
-import express from 'express'
-import colors from 'colors'
 import dotenv from 'dotenv'
-import morgan from 'morgan'
-import connectDB from './config/db.js'
-import authRoutes from './routes/authRoute.js'
+import app from './app.js';
+import connectDB from './config/db.js';
 
+//Handling uncaught Exception
+process.on('uncaughtException', (err) => {
+    console.log(`Error: ${err.message}`);
+    console.log('Shutting down the server for handling uncaught exception');
+})
 
 //configure env
 dotenv.config()
@@ -12,27 +14,20 @@ dotenv.config()
 //database config
 connectDB()
 
-// rest object
-const app = express()
-
-//middlewares
-app.use(express.json())
-app.use(morgan('dev'))
-
-//routes
-app.use('/api/v1/auth', authRoutes)
-
-//rest api
-app.get('/', (req, res) => {
-    res.send({
-        message: 'Welcome to S-Store'
-    })
-})
-
 //PORT
 const PORT = process.env.PORT || 5000;
 
 // run listen
 app.listen(PORT, () => {
-    console.log(`Server is running on ${process.env.DEV_MODE} mode on port ${PORT}`.bgCyan.white)
+    console.log(`Server is running on ${process.env.DEV_MODE} mode on http://localhost:${PORT}`.bgCyan.white)
+})
+
+// Unhandled promise rejection
+process.on('unhandledRejection', (err) => {
+    console.log(`Shutting down the server for ${err.message}`);
+    console.log(`Shutting down the server for unhandle promise rejection`);
+
+    server.close(() => {
+        process.exit(1);
+    });
 })
