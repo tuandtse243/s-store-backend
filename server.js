@@ -8,9 +8,6 @@ process.on('uncaughtException', (err) => {
     console.log('Shutting down the server for handling uncaught exception');
 })
 
-//configure env
-dotenv.config()
-
 //database config
 connectDB()
 
@@ -18,7 +15,7 @@ connectDB()
 const PORT = process.env.PORT || 5000;
 
 // run listen
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server is running on ${process.env.DEV_MODE} mode on http://localhost:${PORT}`.bgCyan.white)
 })
 

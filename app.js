@@ -1,4 +1,4 @@
-import ErrorHandler from "./utils/ErrorHandler.js";
+import ErrorHandler from "./middlewares/error.js";
 import express from "express";
 import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
@@ -15,7 +15,10 @@ app.use(morgan('dev'))
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+}))
 app.use('/', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
@@ -28,6 +31,6 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 app.use('/api/v2/user', user);
 
 //It's for ErrorHandling
-// app.use(ErrorHandler);
+app.use(ErrorHandler);
 
 export default app

@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import sendMail from "../utils/sendMail.js";
 import catchAsyncError from '../middlewares/catchAsyncErrors.js'
 import sendToken from "../utils/jwtToken.js";
+import { isAuthenticated } from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -70,7 +71,7 @@ const createActivationToken = (user) => {
 router.post('/activation', catchAsyncError(async (req, res, next) => {
     try {
         const { activation_token } = req.body;
-        console.log(activation_token)
+        // console.log(activation_token)
 
         const newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
 
@@ -107,16 +108,39 @@ router.post('/activation', catchAsyncError(async (req, res, next) => {
 router.post('/login-user', catchAsyncError(async (req, res, next) => {
     try {
         const {username, password} = req.body;
-
+        console.log('api')
         if(!username || !password) {
             return next(new ErrorHandler('Please provide the all fields!', 400));
         }
         const user = await User.findOne({username}).select('+password');
-
+        
         if(!user) {
             return next(new ErrorHandler("User doesn't exists!", 400));
         }
-        const isPasswordValid = await user.comparePassword(password)
+        const isPasswordValid = await user.comparePassword(password);
+
+        if(!isPasswordValid) {
+            return next(new ErrorHandler("Please provide the correct information", 400));
+        }
+        sendToken(user, 201, res)
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+}));
+
+// load user
+router.get('/getuser', isAuthenticated, catchAsyncError(async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id);
+
+        if(!user) {
+            return next(new ErrorHandler("User doesn't exists", 400));
+        }
+
+        res.status(200).json({
+            success: true,
+            user
+        })
     } catch (error) {
         return next(new ErrorHandler(error.message, 500));
     }
