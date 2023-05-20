@@ -5,8 +5,11 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 import dotenv from 'dotenv';
 import cors from 'cors'
+import path from 'path'
+import { fileURLToPath } from 'url';
 
 import user from './controllers/user.js'
+import product from './controllers/product.js'
 
 const app = express();
 
@@ -15,11 +18,16 @@ app.use(morgan('dev'))
 
 app.use(express.json());
 app.use(cookieParser());
+
 app.use(cors({
     origin: 'http://localhost:3000',
     credentials: true,
 }))
-app.use('/', express.static('uploads'));
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.resolve(path.dirname(__filename));
+
+app.use("/", express.static(path.join(__dirname,"/uploads")));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
 //config
@@ -29,6 +37,7 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 
 //import routes
 app.use('/api/v2/user', user);
+app.use("/api/v2/product", product);
 
 //It's for ErrorHandling
 app.use(ErrorHandler);
