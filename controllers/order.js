@@ -13,7 +13,7 @@ router.post('/create-order', catchAsyncErrors(async (req, res, next) => {
         const { cart, shippingAddress, user, totalPrice, paymentInfo } = req.body;
 
         const order = await Order.create({
-            cart: cart,
+            cart,
             shippingAddress,
             user,
             totalPrice,
@@ -29,23 +29,55 @@ router.post('/create-order', catchAsyncErrors(async (req, res, next) => {
     }
 }))
 
+// update payment in order by Id
+router.post('/update-order', catchAsyncErrors(async (req, res, next) => {
+  try {
+    const order = req.body;
+    const newOrder = await Order.findOneAndUpdate({"_id": order._id}, {paymentInfo: order.paymentInfo})
+    console.log(newOrder)
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+}))
+
 // get all orders of an user
 router.get(
-    "/get-all-orders/:userId",
-    catchAsyncErrors(async (req, res, next) => {
-      try {
-        const orders = await Order.find({ "user._id": req.params.userId }).sort({
-          createdAt: -1,
-        });
-  
-        res.status(200).json({
-          success: true,
-          orders,
-        });
-      } catch (error) {
-        return next(new ErrorHandler(error.message, 500));
-      }
-    })
-  );
+  "/get-all-orders/:userId",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const orders = await Order.find({ "user._id": req.params.userId }).sort({
+        createdAt: -1,
+      });
+
+      res.status(200).json({
+        success: true,
+        orders,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// all orders --- for admin
+router.get(
+  "/admin-all-orders",
+  // isAuthenticated,
+  // isAdmin("Admin"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const orders = await Order.find().sort({
+        deliveredAt: -1,
+        createdAt: -1,
+      });
+      res.status(201).json({
+        success: true,
+        orders,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
 
 export default router

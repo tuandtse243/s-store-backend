@@ -19,7 +19,10 @@ const orderSchema = new mongoose.Schema({
     },
     status:{
         type: String,
-        default: "Processing",
+        default: "PROCESSING",
+    },
+    paymentLink:{
+        type: String,
     },
     paymentInfo:{
         id:{
@@ -31,10 +34,9 @@ const orderSchema = new mongoose.Schema({
         type:{
             type: String,
         },
-    },
-    paidAt:{
-        type: Date,
-        default: Date.now(),
+        paidAt:{
+            type: Date,
+        },
     },
     deliveredAt: {
         type: Date,
