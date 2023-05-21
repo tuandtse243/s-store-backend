@@ -10,6 +10,8 @@ import { fileURLToPath } from 'url';
 
 import user from './controllers/user.js'
 import product from './controllers/product.js'
+import order from './controllers/order.js'
+import momo from './controllers/momo.js'
 
 const app = express();
 
@@ -38,6 +40,8 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 //import routes
 app.use('/api/v2/user', user);
 app.use("/api/v2/product", product);
+app.use("/api/v2/order", order);
+app.use("/api/v2/momo", momo);
 
 //It's for ErrorHandling
 app.use(ErrorHandler);
