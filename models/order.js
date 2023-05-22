@@ -17,12 +17,17 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    shippingFee:{
+        type: Number,
+        require: true,
+    },
+    discountPrice:{
+        type: Number,
+        default: 0,
+    },
     status:{
         type: String,
-        default: "PROCESSING",
-    },
-    paymentLink:{
-        type: String,
+        default: "WAITING PAYMENT",
     },
     paymentInfo:{
         id:{

@@ -10,13 +10,15 @@ const router = express.Router();
 //create new order
 router.post('/create-order', catchAsyncErrors(async (req, res, next) => {
     try {
-        const { cart, shippingAddress, user, totalPrice, paymentInfo } = req.body;
+        const { cart, shippingAddress, user, totalPrice, paymentInfo, discountPrice, shippingFee } = req.body;
 
         const order = await Order.create({
             cart,
             shippingAddress,
             user,
             totalPrice,
+            discountPrice,
+            shippingFee,
             paymentInfo,
         });
 
@@ -33,8 +35,13 @@ router.post('/create-order', catchAsyncErrors(async (req, res, next) => {
 router.post('/update-order', catchAsyncErrors(async (req, res, next) => {
   try {
     const order = req.body;
-    const newOrder = await Order.findOneAndUpdate({"_id": order._id}, {paymentInfo: order.paymentInfo})
+    const newOrder = await Order.findOneAndUpdate({"_id": order._id}, {paymentInfo: order.paymentInfo, status: order.status, shippingAddress: order.shippingAddress})
     console.log(newOrder)
+
+    res.status(201).json({
+      success: true,
+      newOrder,
+    })
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }

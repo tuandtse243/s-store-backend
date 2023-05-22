@@ -10,20 +10,15 @@ router.post('/create-payment', catchAsyncErrors(async (req, res, next) => {
     try {
         const payUrl = await momoPayment();
 
-        const { cart, shippingAddress, user, totalPrice, paymentInfo } = req.body;
+        // const { cart, shippingAddress, user, totalPrice, paymentInfo } = req.body;
+        const order = req.body
 
-        const order = await Order.create({
-            cart,
-            shippingAddress,
-            user,
-            totalPrice,
-            paymentInfo,
-        });
+        const newOrder = await Order.findOneAndUpdate({"_id": order._id}, {paymentInfo: order.paymentInfo})
 
         res.status(201).json({
             success: true,
             payUrl,
-            order,
+            newOrder,
         });
         
     } catch (error) {
