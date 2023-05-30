@@ -36,7 +36,7 @@ router.post('/update-order', catchAsyncErrors(async (req, res, next) => {
   try {
     const order = req.body;
     const newOrder = await Order.findOneAndUpdate({"_id": order._id}, {paymentInfo: order.paymentInfo, status: order.status, shippingAddress: order.shippingAddress})
-    console.log(newOrder)
+    // console.log(newOrder)
 
     res.status(201).json({
       success: true,

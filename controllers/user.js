@@ -7,6 +7,7 @@ import sendMail from "../utils/sendMail.js";
 import catchAsyncError from '../middlewares/catchAsyncErrors.js'
 import sendToken from "../utils/jwtToken.js";
 import { isAuthenticated } from "../middlewares/auth.js";
+import uploadCloud from "../config/cloudinary.js";
 
 const router = express.Router();
 
@@ -158,6 +159,27 @@ router.get('/logout', isAuthenticated, catchAsyncError(async (req, res, next) =>
             success: true,
             message: 'Log out successful!'
         })
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+}))
+
+// update-avatar
+router.post('/update-avatar', uploadCloud.single('image'), catchAsyncError(async (req, res, next) => {
+    try {
+        if (!req.file) {
+            return next(new ErrorHandler('Cập nhật hình thất bại', 400));
+        } else {
+            const id = req.body.id;
+
+            // trả về user trước khi update
+            const newUser = await User.findOneAndUpdate({"_id": id}, {avatar: req.file.path})
+
+            res.status(201).json({
+                success: true,
+                secure_url: req.file.path,
+            })
+        }
     } catch (error) {
         return next(new ErrorHandler(error.message, 500));
     }

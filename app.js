@@ -15,7 +15,6 @@ import momo from './controllers/momo.js'
 
 const app = express();
 
-app.use(express.json())
 app.use(morgan('dev'))
 
 app.use(express.json());
@@ -26,10 +25,10 @@ app.use(cors({
     credentials: true,
 }))
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.resolve(path.dirname(__filename));
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.resolve(path.dirname(__filename));
 
-app.use("/", express.static(path.join(__dirname,"/uploads")));
+// app.use("/", express.static(path.join(__dirname,"/uploads")));
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
 //config
