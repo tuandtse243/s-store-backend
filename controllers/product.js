@@ -5,12 +5,14 @@ import fs from 'fs'
 import Product from "../models/product.js";
 import upload from '../utils/multer.js';
 import uploadCloud from "../config/cloudinary.js";
+import { isSupporter } from "../middlewares/auth.js";
 
 const router = express.Router();
 
 // create product
 router.post(
     "/create-product",
+    isSupporter,
     uploadCloud.array("images"),
     catchAsyncErrors(async (req, res, next) => {
       try {
@@ -38,6 +40,7 @@ router.post(
 // get all products
 router.get(
     "/get-all-products",
+    isSupporter,
     catchAsyncErrors(async (req, res, next) => {
       try {
         const products = await Product.find().sort({ createdAt: -1 });

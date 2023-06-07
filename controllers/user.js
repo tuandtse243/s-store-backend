@@ -72,6 +72,7 @@ const createActivationToken = (user) => {
 router.post('/activation', catchAsyncError(async (req, res, next) => {
     try {
         const { activation_token } = req.body;
+
         // console.log(activation_token)
 
         const newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
@@ -109,7 +110,7 @@ router.post('/activation', catchAsyncError(async (req, res, next) => {
 router.post('/login-user', catchAsyncError(async (req, res, next) => {
     try {
         const {username, password} = req.body;
-        console.log('api')
+
         if(!username || !password) {
             return next(new ErrorHandler('Please provide the all fields!', 400));
         }
@@ -150,10 +151,10 @@ router.get('/getuser', isAuthenticated, catchAsyncError(async (req, res, next) =
 // log out user
 router.get('/logout', isAuthenticated, catchAsyncError(async (req, res, next) => {
     try {
-        res.cookie('token', null, {
-            expires: new Date(Date.now()),
-            httpOnly: true,
-        });
+        // res.cookie('token', null, {
+        //     expires: new Date(Date.now()),
+        //     httpOnly: true,
+        // });
 
         res.status(201).json({
             success: true,
@@ -180,6 +181,47 @@ router.post('/update-avatar', uploadCloud.single('image'), catchAsyncError(async
                 secure_url: req.file.path,
             })
         }
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+}))
+
+// get all users
+router.get('/get-all-users', catchAsyncError(async (req, res, next) => {
+    try {
+        const users = await User.find();
+        res.status(200).json({
+            success: true,
+            users
+        })
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+}))
+
+// update user
+router.put('/update-user', catchAsyncError(async (req, res, next) => {
+    try {
+        const user = req.body;
+
+        const newUser = await User.findOneAndUpdate({"_id": user._id}, {name: user.name, phone: user.phone, email: user.email, role: user.role});
+
+        res.status(200).json({
+            success: true
+        })
+    } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+    }
+}))
+
+// delete user
+router.delete('/delete-user', catchAsyncError(async (req, res, next) => {
+    try {
+        const id = req.query.id;
+        const user = await User.findByIdAndDelete(id);
+        res.status(200).json({
+            success: true
+        })
     } catch (error) {
         return next(new ErrorHandler(error.message, 500));
     }
