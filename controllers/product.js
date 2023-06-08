@@ -43,7 +43,8 @@ router.get(
     catchAsyncErrors(async (req, res, next) => {
       try {
         const products = await Product.find().sort({ createdAt: -1 });
-  
+        
+        // res.setHeader("Access-Control-Allow-Origin", `${process.env.URL_FRONTEND}`);
         res.status(201).json({
           success: true,
           products,
