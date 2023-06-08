@@ -6,7 +6,7 @@ export const momoPayment = async () => {
     const secretKey = 'K951B6PE1waDMi640xX08PD3vg6EkVlz';
     const partnerCode = 'MOMO';
     const orderInfo = 'Thanh toan giay s-store';
-    const redirectUrl = 'http://localhost:3000/order-success';
+    const redirectUrl = `${process.env.URL_FRONTEND}/order-success`;
     const ipnUrl = 'https://webhook.site/947fe39f-f4a9-4df4-b3dc-3000577fad8b';
     const requestType = "captureWallet";
     const amount = 20000;
