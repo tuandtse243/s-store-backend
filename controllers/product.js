@@ -40,7 +40,6 @@ router.post(
 // get all products
 router.get(
     "/get-all-products",
-    isSupporter,
     catchAsyncErrors(async (req, res, next) => {
       try {
         const products = await Product.find().sort({ createdAt: -1 });

@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import sendMail from "../utils/sendMail.js";
 import catchAsyncError from '../middlewares/catchAsyncErrors.js'
 import sendToken from "../utils/jwtToken.js";
-import { isAuthenticated } from "../middlewares/auth.js";
+import { isAuthenticated, isSupporter, isUser } from "../middlewares/auth.js";
 import uploadCloud from "../config/cloudinary.js";
 
 const router = express.Router();
@@ -24,10 +24,6 @@ router.post('/create-user', async (req, res, next) => {
         if(checkEmail) {
             return next(new ErrorHandler('Email already exists', 400))
         }
-
-        // const filename = req.file.filename;
-        // const fileUrl = path.join(filename);
-        // const avatar = fileUrl;
 
         const user = {
             name: name,
@@ -166,7 +162,7 @@ router.get('/logout', isAuthenticated, catchAsyncError(async (req, res, next) =>
 }))
 
 // update-avatar
-router.post('/update-avatar', uploadCloud.single('image'), catchAsyncError(async (req, res, next) => {
+router.post('/update-avatar', isUser, uploadCloud.single('image'), catchAsyncError(async (req, res, next) => {
     try {
         if (!req.file) {
             return next(new ErrorHandler('Cập nhật hình thất bại', 400));
@@ -187,9 +183,11 @@ router.post('/update-avatar', uploadCloud.single('image'), catchAsyncError(async
 }))
 
 // get all users
-router.get('/get-all-users', catchAsyncError(async (req, res, next) => {
+router.get('/get-all-users', isSupporter, catchAsyncError(async (req, res, next) => {
     try {
-        const users = await User.find();
+        const allUsers = await User.find();
+        const users = allUsers.filter(user => user.role !== 'supporter');
+        
         res.status(200).json({
             success: true,
             users
@@ -200,7 +198,7 @@ router.get('/get-all-users', catchAsyncError(async (req, res, next) => {
 }))
 
 // update user
-router.put('/update-user', catchAsyncError(async (req, res, next) => {
+router.put('/update-user', isUser, catchAsyncError(async (req, res, next) => {
     try {
         const user = req.body;
 
@@ -215,7 +213,7 @@ router.put('/update-user', catchAsyncError(async (req, res, next) => {
 }))
 
 // delete user
-router.delete('/delete-user', catchAsyncError(async (req, res, next) => {
+router.delete('/delete-user', isSupporter, catchAsyncError(async (req, res, next) => {
     try {
         const id = req.query.id;
         const user = await User.findByIdAndDelete(id);
