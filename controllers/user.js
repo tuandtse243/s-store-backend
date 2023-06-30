@@ -215,8 +215,9 @@ router.put('/update-user', isUser, catchAsyncError(async (req, res, next) => {
 // delete user
 router.delete('/delete-user', isSupporter, catchAsyncError(async (req, res, next) => {
     try {
-        const id = req.query.id;
-        const user = await User.findByIdAndDelete(id);
+        const id = req.data;
+        console.log(id)
+        // const user = await User.findByIdAndDelete(id);
         res.status(200).json({
             success: true
         })

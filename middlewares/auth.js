@@ -36,6 +36,7 @@ export const isUser = catchAsyncErrors(async(req, res, next) => {
 
 export const isSupporter = catchAsyncErrors(async(req, res, next) => {
     const token = req.header("Authorization");
+    console.log(token)
     if(!token) {
         return next(new ErrorHandler("Hãy đăng nhập để tiếp tục!", 401));
     };
@@ -43,7 +44,7 @@ export const isSupporter = catchAsyncErrors(async(req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.id);
 
-    if(user.role === "supporter") {
+    if(user?.role === "supporter") {
         req.user = user;
         next();
     } else {
