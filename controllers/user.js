@@ -135,6 +135,8 @@ router.get('/getuser', isAuthenticated, catchAsyncError(async (req, res, next) =
             return next(new ErrorHandler("User doesn't exists", 400));
         }
 
+        delete user.password
+
         res.status(200).json({
             success: true,
             user
@@ -187,10 +189,15 @@ router.get('/get-all-users', isSupporter, catchAsyncError(async (req, res, next)
     try {
         const allUsers = await User.find();
         const users = allUsers.filter(user => user.role !== 'supporter');
+
+        const noPasswordUsers = users.map((user) => {
+            delete user.password
+            return user
+        })
         
         res.status(200).json({
             success: true,
-            users
+            noPasswordUsers
         })
     } catch (error) {
         return next(new ErrorHandler(error.message, 500));
