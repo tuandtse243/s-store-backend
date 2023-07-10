@@ -21,8 +21,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-    // origin: 'https://s-store-frontend.vercel.app',
-    origin: 'http://localhost:3000',
+    origin: 'https://s-store-frontend.vercel.app',
+    // origin: 'http://localhost:3000',
     credentials: true,
 }))
 
