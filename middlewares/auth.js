@@ -36,7 +36,7 @@ export const isUser = catchAsyncErrors(async(req, res, next) => {
 
 export const isSupporter = catchAsyncErrors(async(req, res, next) => {
     const token = req.header("Authorization");
-    console.log(token)
+    // console.log(token)
     if(!token) {
         return next(new ErrorHandler("Hãy đăng nhập để tiếp tục!", 401));
     };

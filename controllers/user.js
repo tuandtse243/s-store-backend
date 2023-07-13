@@ -40,8 +40,8 @@ router.post('/create-user', async (req, res, next) => {
         try {
             await sendMail({
                 email: user.email,
-                subject: "Activation your account",
-                message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
+                subject: "Kích hoạt tài khoản của bạn",
+                message: `Xin chào, ${user.name}, hãy click vào đường link để kích hoạt tài khoản của bạn: ${activationUrl}`,
 
             })
             res.status(201).json({
@@ -120,6 +120,8 @@ router.post('/login-user', catchAsyncError(async (req, res, next) => {
         if(!isPasswordValid) {
             return next(new ErrorHandler("Please provide the correct information", 400));
         }
+        delete user.password
+        
         sendToken(user, 201, res)
     } catch (error) {
         return next(new ErrorHandler(error.message, 500));
