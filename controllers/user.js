@@ -120,8 +120,9 @@ router.post('/login-user', catchAsyncError(async (req, res, next) => {
         if(!isPasswordValid) {
             return next(new ErrorHandler("Please provide the correct information", 400));
         }
-        delete user.password
         
+        delete user.password
+
         sendToken(user, 201, res)
     } catch (error) {
         return next(new ErrorHandler(error.message, 500));
