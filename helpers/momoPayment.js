@@ -9,7 +9,7 @@ export const momoPayment = async () => {
     const redirectUrl = `${process.env.URL_FRONTEND}/order-success`;
     const ipnUrl = 'https://webhook.site/947fe39f-f4a9-4df4-b3dc-3000577fad8b';
     const requestType = "captureWallet";
-    const amount = 1500000;
+    const amount = 550000;
     const orderId = partnerCode + new Date().getTime();
     const requestId = orderId;
     const extraData ='';
